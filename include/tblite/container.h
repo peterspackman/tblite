@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with tblite.  If not, see <https://www.gnu.org/licenses/>.
-**/
+ **/
 
 /**@file tblite/container.h
  * @brief
@@ -23,19 +23,27 @@
 #pragma once
 
 #include "tblite/macros.h"
+#include "tblite/structure.h"
 
 /// Interaction container
-typedef struct _tblite_container* tblite_container;
+typedef struct _tblite_container *tblite_container;
 
 /// Create new electric field container
 ///
 /// @param efield: Electric field in atomic units (Hartree/(Bohr*e)), shape: [3]
 /// @return New interaction container
 TBLITE_API_ENTRY tblite_container TBLITE_API_CALL
-tblite_new_electric_field(double* efield);
+tblite_new_electric_field(double *efield);
+
+/// Create new electric field container
+///
+/// @param mol: Molecular structure data
+/// @return New interaction container
+TBLITE_API_ENTRY tblite_container TBLITE_API_CALL
+tblite_new_solvation(tblite_structure mol);
 
 /// Delete container handle
 ///
 /// @param cont: Container handle
 TBLITE_API_ENTRY void TBLITE_API_CALL
-tblite_delete_container(tblite_container* cont);
+tblite_delete_container(tblite_container *cont);

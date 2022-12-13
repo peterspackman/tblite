@@ -20,9 +20,14 @@
 !> API export for managing interaction containers
 module tblite_api_container
    use, intrinsic :: iso_c_binding
+   use mctc_env, only : wp, error_type, fatal_error
    use tblite_api_version, only : namespace
    use tblite_container, only : container_type
+   use tblite_api_structure, only: vp_structure
    use tblite_external_field, only : electric_field
+   use tblite_solvation, only: solvation_type, solvation_input, new_solvation
+   use tblite_api_error, only : vp_error
+
    implicit none
    private
 
@@ -50,6 +55,32 @@ function new_electric_field_api(efield) result(vcont) &
    cont%ptr = electric_field(efield)
    vcont = c_loc(cont)
 end function new_electric_field_api
+
+
+function new_solvation_api(vmol) result(vcont) &
+      & bind(C, name=namespace//"new_solvation")
+   type(c_ptr), value :: vmol
+   type(vp_structure), pointer :: mol
+   type(c_ptr) :: vcont
+   type(vp_container), pointer :: cont
+   class(solvation_type), allocatable :: solv
+   type(solvation_input) :: solv_input
+   type(vp_error), pointer :: error
+
+   if (.not.c_associated(vmol)) return
+   call c_f_pointer(vmol, mol)
+
+   allocate(solv_input%alpb)
+   solv_input%alpb%dielectric_const = 79.0d0
+   allocate(cont)
+   call new_solvation(solv, mol%ptr, solv_input, error%ptr)
+   if (allocated(error%ptr)) then
+      call fatal_error(error%ptr, "Unable to create new solvation")
+   endif
+   call move_alloc(solv, cont%ptr)
+   cont%ptr = solv
+   vcont = c_loc(cont)
+end function new_solvation_api
 
 
 subroutine delete_container_api(vcont) &

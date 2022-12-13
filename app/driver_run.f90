@@ -63,8 +63,7 @@ subroutine run_main(config, error)
 
    type(structure_type) :: mol
    character(len=:), allocatable :: method, filename
-   integer :: unpaired, charge, stat, unit, nspin
-   logical :: exist
+   integer :: unpaired, charge, unit, nspin
    real(wp) :: energy, dpmom(3), qpmom(6)
    real(wp), allocatable :: gradient(:, :), sigma(:, :)
    type(param_record) :: param
